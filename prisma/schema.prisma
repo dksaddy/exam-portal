@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL") // Ensure this is properly configured in your .env file
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  results   Result[] // Relation to Result model (if applicable)
+  createdAt DateTime @default(now())
+  status    String   @default("user") // New column with default value 'user'
+}
+
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  name       String   // Name of the question
+  imageUrl   String?  // URL for an image, optional
+  questions  Json     // JSON array for questions
+  options    Json     // JSON array for options
+  correctAns Json     // JSON array for correct answers
+  createdAt  DateTime @default(now())
+}
+
+
+model Result {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  score     Int
+  attempted Int
+  correct   Int
+  createdAt DateTime @default(now())
+}
